@@ -1,0 +1,3 @@
+[submodule "lib/SteamAuth"]
+	path = lib/SteamAuth
+	url = https://github.com/Ryzhehvost/SteamAuth.git
