@@ -1,4 +1,4 @@
-#Fork
+# Fork
 
 This is a fork of original [SteamDesktopAuthenticator](https://github.com/Jessecar96/SteamDesktopAuthenticator). It seems that original application is out of support, so this fork is aiming to update it according to the breaking changes made on Steam side. If original app (and library it depends on) will get updated, this fork will be deprecated. Below is original README.md content.
 
