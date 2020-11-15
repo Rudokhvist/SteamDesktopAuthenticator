@@ -4,7 +4,7 @@ using System.Runtime.InteropServices;
 using System.Threading;
 using System.Windows.Forms;
 using CommandLine;
-
+using CommandLine.Text;
 
 namespace Steam_Desktop_Authenticator
 {
