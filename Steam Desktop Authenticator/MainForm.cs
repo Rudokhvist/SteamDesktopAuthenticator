@@ -29,6 +29,16 @@ namespace Steam_Desktop_Authenticator
         // Forms
         private TradePopupForm popupFrm = new TradePopupForm();
 
+        protected override void WndProc(ref System.Windows.Forms.Message message)
+        {
+            if (message.Msg == SingleInstance.WM_SHOWFIRSTINSTANCE)
+            {
+                this.Show();
+                this.WindowState = FormWindowState.Normal;
+            }
+            base.WndProc(ref message);
+        }
+
         public MainForm()
         {
             InitializeComponent();
@@ -743,6 +753,11 @@ namespace Steam_Desktop_Authenticator
                 but.Location = curPos;
                 curPos = new Point(curPos.X + but.Width, 0);
             }
+	}
+        
+	private void listAccounts_SelectedIndexChanged(object sender, EventArgs e)
+        {
+
         }
     }
 }
