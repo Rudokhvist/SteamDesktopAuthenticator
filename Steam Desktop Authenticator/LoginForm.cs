@@ -136,18 +136,18 @@ namespace Steam_Desktop_Authenticator
             SessionData session = userLogin.Session;
             AuthenticatorLinker linker = new AuthenticatorLinker(session);
 
-            AuthenticatorLinker.LinkResult linkResponse = AuthenticatorLinker.LinkResult.GeneralFailure;
+            AuthenticatorLinker.ELinkResult linkResponse = AuthenticatorLinker.ELinkResult.GeneralFailure;
             if (Moving) {
                 linkResponse = linker.MoveAuthenticator();
-                if (linkResponse == AuthenticatorLinker.LinkResult.GeneralFailure) {
+                if (linkResponse == AuthenticatorLinker.ELinkResult.GeneralFailure) {
                     MessageBox.Show("Failed to move authenticator to this device.", "Failed to move", MessageBoxButtons.OK, MessageBoxIcon.Error);
                     this.Close();
                     return;
                 }
             } else {
-                while ((linkResponse = linker.AddAuthenticator()) != AuthenticatorLinker.LinkResult.AwaitingFinalization) {
+                while ((linkResponse = linker.AddAuthenticator()) != AuthenticatorLinker.ELinkResult.AwaitingFinalization) {
                     switch (linkResponse) {
-                        case AuthenticatorLinker.LinkResult.MustProvidePhoneNumber:
+                        case AuthenticatorLinker.ELinkResult.MustProvidePhoneNumber:
                             string phoneNumber = "";
                             while (!PhoneNumberOkay(phoneNumber)) {
                                 InputForm phoneNumberForm = new InputForm("Enter your phone number in the following format: +{cC} phoneNumber. EG, +1 123-456-7890");
@@ -163,15 +163,15 @@ namespace Steam_Desktop_Authenticator
                             linker.PhoneNumber = phoneNumber;
                             break;
 
-                        case AuthenticatorLinker.LinkResult.MustRemovePhoneNumber:
+                        case AuthenticatorLinker.ELinkResult.MustRemovePhoneNumber:
                             linker.PhoneNumber = null;
                             break;
 
-                        case AuthenticatorLinker.LinkResult.MustConfirmEmail:
+                        case AuthenticatorLinker.ELinkResult.MustConfirmEmail:
                             MessageBox.Show("Please check your email, and click the link Steam sent you before continuing.");
                             break;
 
-                        case AuthenticatorLinker.LinkResult.GeneralFailure:
+                        case AuthenticatorLinker.ELinkResult.GeneralFailure:
                             MessageBox.Show("Error adding your phone number. Steam returned \"GeneralFailure\".");
                             this.Close();
                             return;
@@ -213,8 +213,8 @@ namespace Steam_Desktop_Authenticator
                 MessageBox.Show("The Mobile Authenticator has not yet been linked. Before finalizing the authenticator, please write down your revocation code: " + linker.LinkedAccount.RevocationCode);
             }
 
-			AuthenticatorLinker.FinalizeResult finalizeResponse = AuthenticatorLinker.FinalizeResult.GeneralFailure;
-            while (finalizeResponse != AuthenticatorLinker.FinalizeResult.Success)
+			AuthenticatorLinker.EFinalizeResult finalizeResponse = AuthenticatorLinker.EFinalizeResult.GeneralFailure;
+            while (finalizeResponse != AuthenticatorLinker.EFinalizeResult.Success)
             {
                 InputForm smsCodeForm = new InputForm("Please input the SMS code sent to your phone.");
                 smsCodeForm.ShowDialog();
@@ -242,16 +242,16 @@ namespace Steam_Desktop_Authenticator
                 }
                 switch (finalizeResponse)
                 {
-                    case AuthenticatorLinker.FinalizeResult.BadSMSCode:
+                    case AuthenticatorLinker.EFinalizeResult.BadSMSCode:
                         continue;
 
-                    case AuthenticatorLinker.FinalizeResult.UnableToGenerateCorrectCodes:
+                    case AuthenticatorLinker.EFinalizeResult.UnableToGenerateCorrectCodes:
                         MessageBox.Show("Unable to generate the proper codes to finalize this authenticator. The authenticator should not have been linked. In the off-chance it was, please write down your revocation code, as this is the last chance to see it: " + linker.LinkedAccount.RevocationCode);
                         manifest.RemoveAccount(linker.LinkedAccount);
                         this.Close();
                         return;
 
-                    case AuthenticatorLinker.FinalizeResult.GeneralFailure:
+                    case AuthenticatorLinker.EFinalizeResult.GeneralFailure:
                         MessageBox.Show("Unable to finalize this authenticator. The authenticator should not have been linked. In the off-chance it was, please write down your revocation code, as this is the last chance to see it: " + linker.LinkedAccount.RevocationCode);
                         manifest.RemoveAccount(linker.LinkedAccount);
                         this.Close();

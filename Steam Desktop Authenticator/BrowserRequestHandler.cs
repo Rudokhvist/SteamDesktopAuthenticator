@@ -10,116 +10,81 @@ using System.IO;
 using Newtonsoft.Json;
 using System.Security.Cryptography.X509Certificates;
 
-namespace Steam_Desktop_Authenticator
-{
-    class BrowserRequestHandler : IRequestHandler
-    {
-        public string Cookies;
+namespace Steam_Desktop_Authenticator {
+	class BrowserRequestHandler : IRequestHandler {
+		public string Cookies;
 
-        public static readonly string VersionNumberString = String.Format("Chromium: {0}, CEF: {1}, CefSharp: {2}",
-            Cef.ChromiumVersion, Cef.CefVersion, Cef.CefSharpVersion);
+		public static readonly string VersionNumberString = string.Format("Chromium: {0}, CEF: {1}, CefSharp: {2}",
+			Cef.ChromiumVersion, Cef.CefVersion, Cef.CefSharpVersion);
 
-        bool IRequestHandler.OnOpenUrlFromTab(IWebBrowser browserControl, IBrowser browser, IFrame frame, string targetUrl, WindowOpenDisposition targetDisposition, bool userGesture)
-        {
-            return OnOpenUrlFromTab(browserControl, browser, frame, targetUrl, targetDisposition, userGesture);
-        }
+		bool IRequestHandler.OnOpenUrlFromTab(IWebBrowser browserControl, IBrowser browser, IFrame frame, string targetUrl, WindowOpenDisposition targetDisposition, bool userGesture) => OnOpenUrlFromTab(browserControl, browser, frame, targetUrl, targetDisposition, userGesture);
 
-        protected virtual bool OnOpenUrlFromTab(IWebBrowser browserControl, IBrowser browser, IFrame frame, string targetUrl, WindowOpenDisposition targetDisposition, bool userGesture)
-        {
-            return false;
-        }
+		protected virtual bool OnOpenUrlFromTab(IWebBrowser browserControl, IBrowser browser, IFrame frame, string targetUrl, WindowOpenDisposition targetDisposition, bool userGesture) => false;
 
-        bool IRequestHandler.OnCertificateError(IWebBrowser browserControl, IBrowser browser, CefErrorCode errorCode, string requestUrl, ISslInfo sslInfo, IRequestCallback callback)
-        {
-            callback.Dispose();
-            return false;
-        }
+		bool IRequestHandler.OnCertificateError(IWebBrowser browserControl, IBrowser browser, CefErrorCode errorCode, string requestUrl, ISslInfo sslInfo, IRequestCallback callback) {
+			callback.Dispose();
+			return false;
+		}
 
-        void IRequestHandler.OnPluginCrashed(IWebBrowser browserControl, IBrowser browser, string pluginPath)
-        {
-            // TODO: Add your own code here for handling scenarios where a plugin crashed, for one reason or another.
-        }
+		void IRequestHandler.OnPluginCrashed(IWebBrowser browserControl, IBrowser browser, string pluginPath) {
+			// TODO: Add your own code here for handling scenarios where a plugin crashed, for one reason or another.
+		}
 
-        CefReturnValue IRequestHandler.OnBeforeResourceLoad(IWebBrowser browserControl, IBrowser browser, IFrame frame, IRequest request, IRequestCallback callback)
-        {   
-            // Check if the session is expired
-            if (request.Url == "steammobile://lostauth")
-            {
-                MessageBox.Show("Failed to load confirmations.\nTry using \"Force session refresh\" under the Selected Account menu.\nIf that doesn't work use the \"Login again\" option.", "Confirmations", MessageBoxButtons.OK, MessageBoxIcon.Error);
-                return CefReturnValue.Cancel;
-            }
-            
-            // For some reason, in order to set cookies manually using a hdeader you need to clear the real cookies every time :/
-            Cef.GetGlobalCookieManager().VisitAllCookies(new DeleteAllCookiesVisitor());
+		CefReturnValue IRequestHandler.OnBeforeResourceLoad(IWebBrowser browserControl, IBrowser browser, IFrame frame, IRequest request, IRequestCallback callback) {
+			// Check if the session is expired
+			if (request.Url == "steammobile://lostauth") {
+				MessageBox.Show("Failed to load confirmations.\nTry using \"Force session refresh\" under the Selected Account menu.\nIf that doesn't work use the \"Login again\" option.", "Confirmations", MessageBoxButtons.OK, MessageBoxIcon.Error);
+				return CefReturnValue.Cancel;
+			}
 
-            if (request.Url.StartsWith("steammobile://"))
-            {
-                // Cancel all steammobile:// requests (for the app)
-                return CefReturnValue.Cancel;
-            }
-            else
-            {
-                var headers = request.Headers;
-                headers.Add("Cookie", Cookies);
-                headers.Add("X-Requested-With", "com.valvesoftware.android.steam.community");
-                request.Headers = headers;
-                return CefReturnValue.Continue;
-            }
-        }
+			// For some reason, in order to set cookies manually using a hdeader you need to clear the real cookies every time :/
+			Cef.GetGlobalCookieManager().VisitAllCookies(new DeleteAllCookiesVisitor());
 
-        bool IRequestHandler.GetAuthCredentials(IWebBrowser browserControl, IBrowser browser, IFrame frame, bool isProxy, string host, int port, string realm, string scheme, IAuthCallback callback)
-        {
-            callback.Dispose();
-            return false;
-        }
+			if (request.Url.StartsWith("steammobile://")) {
+				// Cancel all steammobile:// requests (for the app)
+				return CefReturnValue.Cancel;
+			} else {
+				System.Collections.Specialized.NameValueCollection headers = request.Headers;
+				headers.Add("Cookie", Cookies);
+				headers.Add("X-Requested-With", "com.valvesoftware.android.steam.community");
+				request.Headers = headers;
+				return CefReturnValue.Continue;
+			}
+		}
 
-        void IRequestHandler.OnRenderProcessTerminated(IWebBrowser browserControl, IBrowser browser, CefTerminationStatus status)
-        {
+		bool IRequestHandler.GetAuthCredentials(IWebBrowser browserControl, IBrowser browser, IFrame frame, bool isProxy, string host, int port, string realm, string scheme, IAuthCallback callback) {
+			callback.Dispose();
+			return false;
+		}
 
-        }
+		void IRequestHandler.OnRenderProcessTerminated(IWebBrowser browserControl, IBrowser browser, CefTerminationStatus status) {
 
-        bool IRequestHandler.OnQuotaRequest(IWebBrowser browserControl, IBrowser browser, string originUrl, long newSize, IRequestCallback callback)
-        {
-            return false;
-        }
+		}
 
-        bool IRequestHandler.OnProtocolExecution(IWebBrowser browserControl, IBrowser browser, string url)
-        {
-            return false;
-        }
+		bool IRequestHandler.OnQuotaRequest(IWebBrowser browserControl, IBrowser browser, string originUrl, long newSize, IRequestCallback callback) => false;
 
-        void IRequestHandler.OnRenderViewReady(IWebBrowser browserControl, IBrowser browser)
-        {
+		bool IRequestHandler.OnProtocolExecution(IWebBrowser browserControl, IBrowser browser, string url) => false;
 
-        }
+		void IRequestHandler.OnRenderViewReady(IWebBrowser browserControl, IBrowser browser) {
 
-        bool IRequestHandler.OnResourceResponse(IWebBrowser browserControl, IBrowser browser, IFrame frame, IRequest request, IResponse response)
-        {
-            return false;
-        }
+		}
 
-        public void OnResourceLoadComplete(IWebBrowser browserControl, IBrowser browser, IFrame frame, IRequest request, IResponse response, UrlRequestStatus status, long receivedContentLength)
-        {
-            
-        }
+		bool IRequestHandler.OnResourceResponse(IWebBrowser browserControl, IBrowser browser, IFrame frame, IRequest request, IResponse response) => false;
 
-        public IResponseFilter GetResourceResponseFilter(IWebBrowser browserControl, IBrowser browser, IFrame frame, IRequest request, IResponse response)
-        {
-            return new ResourceResponseFilter();
-        }
+		public void OnResourceLoadComplete(IWebBrowser browserControl, IBrowser browser, IFrame frame, IRequest request, IResponse response, UrlRequestStatus status, long receivedContentLength) {
 
-        public bool OnSelectClientCertificate(IWebBrowser browserControl, IBrowser browser, bool isProxy, string host, int port, X509Certificate2Collection certificates, ISelectClientCertificateCallback callback)
-        {
-            return true;
-        }
+		}
 
-        public void OnResourceRedirect(IWebBrowser browserControl, IBrowser browser, IFrame frame, IRequest request, IResponse response, ref string newUrl)
-        {
-            
-        }
+		public IResponseFilter GetResourceResponseFilter(IWebBrowser browserControl, IBrowser browser, IFrame frame, IRequest request, IResponse response) => new ResourceResponseFilter();
 
-        public bool OnBeforeBrowse(IWebBrowser chromiumWebBrowser, IBrowser browser, IFrame frame, IRequest request, bool userGesture, bool isRedirect) => false;
-        public bool CanGetCookies(IWebBrowser chromiumWebBrowser, IBrowser browser, IFrame frame, IRequest request) => true;
-        public bool CanSetCookie(IWebBrowser chromiumWebBrowser, IBrowser browser, IFrame frame, IRequest request, Cookie cookie) => true;
-    }
+		public bool OnSelectClientCertificate(IWebBrowser browserControl, IBrowser browser, bool isProxy, string host, int port, X509Certificate2Collection certificates, ISelectClientCertificateCallback callback) => true;
+
+		public void OnResourceRedirect(IWebBrowser browserControl, IBrowser browser, IFrame frame, IRequest request, IResponse response, ref string newUrl) {
+
+		}
+
+		public bool OnBeforeBrowse(IWebBrowser chromiumWebBrowser, IBrowser browser, IFrame frame, IRequest request, bool userGesture, bool isRedirect) => false;
+		public bool CanGetCookies(IWebBrowser chromiumWebBrowser, IBrowser browser, IFrame frame, IRequest request) => true;
+		public bool CanSetCookie(IWebBrowser chromiumWebBrowser, IBrowser browser, IFrame frame, IRequest request, Cookie cookie) => true;
+	}
 }
