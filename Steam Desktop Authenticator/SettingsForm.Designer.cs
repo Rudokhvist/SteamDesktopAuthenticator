@@ -48,7 +48,7 @@
             this.chkPeriodicChecking.TabIndex = 0;
             this.chkPeriodicChecking.Text = "Periodically check for new confirmations\r\nand show a popup when they arrive";
             this.chkPeriodicChecking.UseVisualStyleBackColor = true;
-            this.chkPeriodicChecking.CheckedChanged += new System.EventHandler(this.chkPeriodicChecking_CheckedChanged);
+            this.chkPeriodicChecking.CheckedChanged += new System.EventHandler(this.ChkPeriodicChecking_CheckedChanged);
             // 
             // btnSave
             // 
@@ -61,7 +61,7 @@
             this.btnSave.TabIndex = 1;
             this.btnSave.Text = "Save";
             this.btnSave.UseVisualStyleBackColor = true;
-            this.btnSave.Click += new System.EventHandler(this.btnSave_Click);
+            this.btnSave.Click += new System.EventHandler(this.BtnSave_Click);
             // 
             // numPeriodicInterval
             // 
@@ -108,7 +108,7 @@
             this.chkConfirmMarket.TabIndex = 5;
             this.chkConfirmMarket.Text = "Auto-confirm market transactions";
             this.chkConfirmMarket.UseVisualStyleBackColor = true;
-            this.chkConfirmMarket.CheckedChanged += new System.EventHandler(this.chkConfirmMarket_CheckedChanged);
+            this.chkConfirmMarket.CheckedChanged += new System.EventHandler(this.ChkConfirmMarket_CheckedChanged);
             // 
             // chkConfirmTrades
             // 
@@ -119,7 +119,7 @@
             this.chkConfirmTrades.TabIndex = 6;
             this.chkConfirmTrades.Text = "Auto-confirm trades";
             this.chkConfirmTrades.UseVisualStyleBackColor = true;
-            this.chkConfirmTrades.CheckedChanged += new System.EventHandler(this.chkConfirmTrades_CheckedChanged);
+            this.chkConfirmTrades.CheckedChanged += new System.EventHandler(this.ChkConfirmTrades_CheckedChanged);
             // 
             // SettingsForm
             // 

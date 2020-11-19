@@ -45,14 +45,13 @@ namespace Steam_Desktop_Authenticator {
 		public static readonly int WM_SHOWFIRSTINSTANCE = WinApi.RegisterWindowMessage("WM_SHOWFIRSTINSTANCE|{0}", ProgramInfo.AssemblyGuid);
 		static Mutex Mutex;
 		static public bool Start() {
-			bool onlyInstance = false;
 			string mutexName = string.Format("Local\\{0}", ProgramInfo.AssemblyGuid);
 
 			// if you want your app to be limited to a single instance
 			// across ALL SESSIONS (multiple users & terminal services), then use the following line instead:
 			// string mutexName = String.Format("Global\\{0}", ProgramInfo.AssemblyGuid);
 
-			Mutex = new Mutex(true, mutexName, out onlyInstance);
+			Mutex = new Mutex(true, mutexName, out bool onlyInstance);
 			return onlyInstance;
 		}
 		static public void ShowFirstInstance() => WinApi.PostMessage(

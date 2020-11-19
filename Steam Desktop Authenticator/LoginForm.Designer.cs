@@ -85,7 +85,7 @@
             this.btnSteamLogin.TabIndex = 4;
             this.btnSteamLogin.Text = "Login";
             this.btnSteamLogin.UseVisualStyleBackColor = true;
-            this.btnSteamLogin.Click += new System.EventHandler(this.btnSteamLogin_Click);
+            this.btnSteamLogin.Click += new System.EventHandler(this.BtnSteamLogin_Click);
             // 
             // labelLoginExplanation
             // 

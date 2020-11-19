@@ -84,7 +84,7 @@
             this.btnSteamLogin.TabIndex = 1;
             this.btnSteamLogin.Text = "Setup New Account";
             this.btnSteamLogin.UseVisualStyleBackColor = true;
-            this.btnSteamLogin.Click += new System.EventHandler(this.btnSteamLogin_Click);
+            this.btnSteamLogin.Click += new System.EventHandler(this.BtnSteamLogin_Click);
             // 
             // groupBox1
             // 
@@ -109,7 +109,7 @@
             this.btnCopy.TabIndex = 2;
             this.btnCopy.Text = "Copy";
             this.btnCopy.UseVisualStyleBackColor = true;
-            this.btnCopy.Click += new System.EventHandler(this.btnCopy_Click);
+            this.btnCopy.Click += new System.EventHandler(this.BtnCopy_Click);
             // 
             // pbTimeout
             // 
@@ -145,14 +145,14 @@
             this.listAccounts.Name = "listAccounts";
             this.listAccounts.Size = new System.Drawing.Size(310, 186);
             this.listAccounts.TabIndex = 3;
-            this.listAccounts.SelectedValueChanged += new System.EventHandler(this.listAccounts_SelectedValueChanged);
-            this.listAccounts.KeyDown += new System.Windows.Forms.KeyEventHandler(this.listAccounts_KeyDown);
+            this.listAccounts.SelectedValueChanged += new System.EventHandler(this.ListAccounts_SelectedValueChanged);
+            this.listAccounts.KeyDown += new System.Windows.Forms.KeyEventHandler(this.ListAccounts_KeyDown);
             // 
             // timerSteamGuard
             // 
             this.timerSteamGuard.Enabled = true;
             this.timerSteamGuard.Interval = 1000;
-            this.timerSteamGuard.Tick += new System.EventHandler(this.timerSteamGuard_Tick);
+            this.timerSteamGuard.Tick += new System.EventHandler(this.TimerSteamGuard_Tick);
             // 
             // btnTradeConfirmations
             // 
@@ -164,7 +164,7 @@
             this.btnTradeConfirmations.TabIndex = 4;
             this.btnTradeConfirmations.Text = "View Confirmations";
             this.btnTradeConfirmations.UseVisualStyleBackColor = true;
-            this.btnTradeConfirmations.Click += new System.EventHandler(this.btnTradeConfirmations_Click);
+            this.btnTradeConfirmations.Click += new System.EventHandler(this.BtnTradeConfirmations_Click);
             // 
             // btnManageEncryption
             // 
@@ -175,7 +175,7 @@
             this.btnManageEncryption.TabIndex = 6;
             this.btnManageEncryption.Text = "Manage Encryption";
             this.btnManageEncryption.UseVisualStyleBackColor = true;
-            this.btnManageEncryption.Click += new System.EventHandler(this.btnManageEncryption_Click);
+            this.btnManageEncryption.Click += new System.EventHandler(this.BtnManageEncryption_Click);
             // 
             // groupAccount
             // 
@@ -217,7 +217,7 @@
             this.labelUpdate.TabStop = true;
             this.labelUpdate.Text = "Check for updates";
             this.labelUpdate.TextAlign = System.Drawing.ContentAlignment.BottomLeft;
-            this.labelUpdate.LinkClicked += new System.Windows.Forms.LinkLabelLinkClickedEventHandler(this.labelUpdate_LinkClicked);
+            this.labelUpdate.LinkClicked += new System.Windows.Forms.LinkLabelLinkClickedEventHandler(this.LabelUpdate_LinkClicked);
             // 
             // menuStrip
             // 
@@ -247,7 +247,7 @@
             this.menuImportAccount.Name = "menuImportAccount";
             this.menuImportAccount.Size = new System.Drawing.Size(158, 22);
             this.menuImportAccount.Text = "Import Account";
-            this.menuImportAccount.Click += new System.EventHandler(this.menuImportAccount_Click);
+            this.menuImportAccount.Click += new System.EventHandler(this.MenuImportAccount_Click);
             // 
             // toolStripSeparator1
             // 
@@ -259,14 +259,14 @@
             this.menuSettings.Name = "menuSettings";
             this.menuSettings.Size = new System.Drawing.Size(158, 22);
             this.menuSettings.Text = "Settings";
-            this.menuSettings.Click += new System.EventHandler(this.menuSettings_Click);
+            this.menuSettings.Click += new System.EventHandler(this.MenuSettings_Click);
             // 
             // menuQuit
             // 
             this.menuQuit.Name = "menuQuit";
             this.menuQuit.Size = new System.Drawing.Size(158, 22);
             this.menuQuit.Text = "Quit";
-            this.menuQuit.Click += new System.EventHandler(this.menuQuit_Click);
+            this.menuQuit.Click += new System.EventHandler(this.MenuQuit_Click);
             // 
             // accountToolStripMenuItem
             // 
@@ -285,14 +285,14 @@
             this.menuLoginAgain.Name = "menuLoginAgain";
             this.menuLoginAgain.Size = new System.Drawing.Size(205, 22);
             this.menuLoginAgain.Text = "Login again";
-            this.menuLoginAgain.Click += new System.EventHandler(this.menuLoginAgain_Click);
+            this.menuLoginAgain.Click += new System.EventHandler(this.MenuLoginAgain_Click);
             // 
             // menuRefreshSession
             // 
             this.menuRefreshSession.Name = "menuRefreshSession";
             this.menuRefreshSession.Size = new System.Drawing.Size(205, 22);
             this.menuRefreshSession.Text = "Force session refresh";
-            this.menuRefreshSession.Click += new System.EventHandler(this.menuRefreshSession_Click);
+            this.menuRefreshSession.Click += new System.EventHandler(this.MenuRefreshSession_Click);
             // 
             // toolStripSeparator4
             // 
@@ -304,21 +304,21 @@
             this.menuRemoveAccountFromManifest.Name = "menuRemoveAccountFromManifest";
             this.menuRemoveAccountFromManifest.Size = new System.Drawing.Size(205, 22);
             this.menuRemoveAccountFromManifest.Text = "Remove from manifest";
-            this.menuRemoveAccountFromManifest.Click += new System.EventHandler(this.menuRemoveAccountFromManifest_Click);
+            this.menuRemoveAccountFromManifest.Click += new System.EventHandler(this.MenuRemoveAccountFromManifest_Click);
             // 
             // menuDeactivateAuthenticator
             // 
             this.menuDeactivateAuthenticator.Name = "menuDeactivateAuthenticator";
             this.menuDeactivateAuthenticator.Size = new System.Drawing.Size(205, 22);
             this.menuDeactivateAuthenticator.Text = "Deactivate Authenticator";
-            this.menuDeactivateAuthenticator.Click += new System.EventHandler(this.menuDeactivateAuthenticator_Click);
+            this.menuDeactivateAuthenticator.Click += new System.EventHandler(this.MenuDeactivateAuthenticator_Click);
             // 
             // trayIcon
             // 
             this.trayIcon.ContextMenuStrip = this.menuStripTray;
             this.trayIcon.Text = "Steam Desktop Authenticator";
             this.trayIcon.Visible = true;
-            this.trayIcon.MouseDoubleClick += new System.Windows.Forms.MouseEventHandler(this.trayIcon_MouseDoubleClick);
+            this.trayIcon.MouseDoubleClick += new System.Windows.Forms.MouseEventHandler(this.TrayIcon_MouseDoubleClick);
             // 
             // menuStripTray
             // 
@@ -338,7 +338,7 @@
             this.trayRestore.Name = "trayRestore";
             this.trayRestore.Size = new System.Drawing.Size(215, 22);
             this.trayRestore.Text = "Restore";
-            this.trayRestore.Click += new System.EventHandler(this.trayRestore_Click);
+            this.trayRestore.Click += new System.EventHandler(this.TrayRestore_Click);
             // 
             // toolStripSeparator2
             // 
@@ -353,21 +353,21 @@
             "test2"});
             this.trayAccountList.Name = "trayAccountList";
             this.trayAccountList.Size = new System.Drawing.Size(121, 23);
-            this.trayAccountList.SelectedIndexChanged += new System.EventHandler(this.trayAccountList_SelectedIndexChanged);
+            this.trayAccountList.SelectedIndexChanged += new System.EventHandler(this.TrayAccountList_SelectedIndexChanged);
             // 
             // trayTradeConfirmations
             // 
             this.trayTradeConfirmations.Name = "trayTradeConfirmations";
             this.trayTradeConfirmations.Size = new System.Drawing.Size(215, 22);
             this.trayTradeConfirmations.Text = "Trade Confirmations";
-            this.trayTradeConfirmations.Click += new System.EventHandler(this.trayTradeConfirmations_Click);
+            this.trayTradeConfirmations.Click += new System.EventHandler(this.TrayTradeConfirmations_Click);
             // 
             // trayCopySteamGuard
             // 
             this.trayCopySteamGuard.Name = "trayCopySteamGuard";
             this.trayCopySteamGuard.Size = new System.Drawing.Size(215, 22);
             this.trayCopySteamGuard.Text = "Copy SG code to clipboard";
-            this.trayCopySteamGuard.Click += new System.EventHandler(this.trayCopySteamGuard_Click);
+            this.trayCopySteamGuard.Click += new System.EventHandler(this.TrayCopySteamGuard_Click);
             // 
             // toolStripSeparator3
             // 
@@ -379,13 +379,13 @@
             this.trayQuit.Name = "trayQuit";
             this.trayQuit.Size = new System.Drawing.Size(215, 22);
             this.trayQuit.Text = "Quit";
-            this.trayQuit.Click += new System.EventHandler(this.trayQuit_Click);
+            this.trayQuit.Click += new System.EventHandler(this.TrayQuit_Click);
             // 
             // timerTradesPopup
             // 
             this.timerTradesPopup.Enabled = true;
             this.timerTradesPopup.Interval = 5000;
-            this.timerTradesPopup.Tick += new System.EventHandler(this.timerTradesPopup_Tick);
+            this.timerTradesPopup.Tick += new System.EventHandler(this.TimerTradesPopup_Tick);
             // 
             // lblStatus
             // 
@@ -406,7 +406,7 @@
             this.txtAccSearch.Name = "txtAccSearch";
             this.txtAccSearch.Size = new System.Drawing.Size(273, 22);
             this.txtAccSearch.TabIndex = 12;
-            this.txtAccSearch.TextChanged += new System.EventHandler(this.txtAccSearch_TextChanged);
+            this.txtAccSearch.TextChanged += new System.EventHandler(this.TxtAccSearch_TextChanged);
             // 
             // label1
             // 
@@ -429,7 +429,7 @@
             this.panelButtons.Name = "panelButtons";
             this.panelButtons.Size = new System.Drawing.Size(310, 30);
             this.panelButtons.TabIndex = 14;
-            this.panelButtons.SizeChanged += new System.EventHandler(this.panelButtons_SizeChanged);
+            this.panelButtons.SizeChanged += new System.EventHandler(this.PanelButtons_SizeChanged);
             // 
             // MainForm
             // 

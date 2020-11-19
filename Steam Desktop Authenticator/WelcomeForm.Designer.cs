@@ -55,7 +55,7 @@
             this.btnImportConfig.Text = "I already setup Steam Desktop Authenticator in another location on this PC and I " +
     "want to import its account(s).\r\n";
             this.btnImportConfig.UseVisualStyleBackColor = true;
-            this.btnImportConfig.Click += new System.EventHandler(this.btnImportConfig_Click);
+            this.btnImportConfig.Click += new System.EventHandler(this.BtnImportConfig_Click);
             // 
             // label2
             // 
@@ -76,7 +76,7 @@
             this.btnJustStart.TabIndex = 4;
             this.btnJustStart.Text = "This is my first time and \r\nI just want to sign into my Steam Account(s).";
             this.btnJustStart.UseVisualStyleBackColor = true;
-            this.btnJustStart.Click += new System.EventHandler(this.btnJustStart_Click);
+            this.btnJustStart.Click += new System.EventHandler(this.BtnJustStart_Click);
             // 
             // WelcomeForm
             // 

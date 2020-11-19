@@ -45,7 +45,7 @@ namespace Steam_Desktop_Authenticator
             this.btnImport.TabIndex = 3;
             this.btnImport.Text = "Select .maFile file to Import";
             this.btnImport.UseVisualStyleBackColor = true;
-            this.btnImport.Click += new System.EventHandler(this.btnImport_Click);
+            this.btnImport.Click += new System.EventHandler(this.BtnImport_Click);
             // 
             // btnCancel
             // 
@@ -56,7 +56,7 @@ namespace Steam_Desktop_Authenticator
             this.btnCancel.TabIndex = 4;
             this.btnCancel.Text = "Cancel";
             this.btnCancel.UseVisualStyleBackColor = true;
-            this.btnCancel.Click += new System.EventHandler(this.btnCancel_Click);
+            this.btnCancel.Click += new System.EventHandler(this.BtnCancel_Click);
             // 
             // label1
             // 

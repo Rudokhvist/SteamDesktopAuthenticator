@@ -56,7 +56,7 @@
             this.btnDeny.TabIndex = 2;
             this.btnDeny.Text = "Deny";
             this.btnDeny.UseVisualStyleBackColor = false;
-            this.btnDeny.Click += new System.EventHandler(this.btnDeny_Click);
+            this.btnDeny.Click += new System.EventHandler(this.BtnDeny_Click);
             // 
             // btnAccept
             // 
@@ -68,7 +68,7 @@
             this.btnAccept.TabIndex = 2;
             this.btnAccept.Text = "Accept";
             this.btnAccept.UseVisualStyleBackColor = false;
-            this.btnAccept.Click += new System.EventHandler(this.btnAccept_Click);
+            this.btnAccept.Click += new System.EventHandler(this.BtnAccept_Click);
             // 
             // lblStatus
             // 
