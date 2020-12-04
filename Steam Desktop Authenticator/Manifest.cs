@@ -283,30 +283,49 @@ namespace Steam_Desktop_Authenticator {
             return password != null;
         }
 
-		public bool RemoveAccount(SteamGuardAccount account, bool deleteMaFile = true) {
+		public bool RemoveAccount(SteamGuardAccount account, bool deleteMaFile = true, bool fromGui = false) {
 			ManifestEntry entry = (from e in Entries where e.SteamID == account.Session.SteamID select e).FirstOrDefault();
 			if (entry == null) {
 				return true; // If something never existed, did you do what they asked?
 			}
 
-			string maDir = Manifest.GetExecutableDir() + "/maFiles/";
-			string filename = maDir + entry.Filename;
-			Entries.Remove(entry);
+            string password = null;
+            if (fromGui && Encrypted && !CanProceedAction(out password))
+                return false;
+
+            Entries.Remove(entry);
 
 			if (Entries.Count == 0) {
 				Encrypted = false;
 			}
 
-			if (Save() && deleteMaFile) {
-				try {
-					File.Delete(filename);
-					return true;
-				} catch (Exception) {
-					return false;
-				}
-			}
+            var saveSuccess = Save();
+            if (!saveSuccess)
+                return false;
 
-			return false;
+            var filename = Path.Combine(GetExecutableDir(), "maFiles", entry.Filename);
+			if (deleteMaFile) {
+                try {
+                    File.Delete(filename);
+                    return true;
+                }
+                catch {
+                    return false;
+                }
+            }
+
+            try {
+                if (Encrypted) {
+                    var fileContents = File.ReadAllText(filename);
+                    fileContents = FileEncryptor.DecryptData(password, entry.Salt, entry.IV, fileContents);
+                    File.WriteAllText(filename, fileContents);
+                }
+
+                return true;
+            }
+			catch {}
+
+            return false;
 		}
 
 		public bool SaveAccount(SteamGuardAccount account, bool encrypt, string passKey = null) {

@@ -190,16 +190,12 @@ namespace Steam_Desktop_Authenticator {
 		private void MenuQuit_Click(object sender, EventArgs e) => Application.Exit();
 
 		private void MenuRemoveAccountFromManifest_Click(object sender, EventArgs e) {
-			if (Manifest.Encrypted) {
-				MessageBox.Show("You cannot remove accounts from the manifest file while it is encrypted.", "Remove from manifest", MessageBoxButtons.OK, MessageBoxIcon.Error);
-			} else {
-				DialogResult res = MessageBox.Show("This will remove the selected account from the manifest file.\nUse this to move a maFile to another computer.\nThis will NOT delete your maFile.", "Remove from manifest", MessageBoxButtons.OKCancel);
-				if (res == DialogResult.OK) {
-					Manifest.RemoveAccount(CurrentAccount, false);
-					MessageBox.Show("Account removed from manifest.\nYou can now move its maFile to another computer and import it using the File menu.", "Remove from manifest");
-					LoadAccountsList();
-				}
-			}
+            DialogResult res = MessageBox.Show("This will remove the selected account from the manifest file.\nUse this to move a maFile to another computer.\nThis will NOT delete your maFile.", "Remove from manifest", MessageBoxButtons.OKCancel);
+            if (res == DialogResult.OK) {
+                Manifest.RemoveAccount(CurrentAccount, false, true);
+                MessageBox.Show("Account removed from manifest.\nYou can now move its maFile to another computer and import it using the File menu.", "Remove from manifest");
+                LoadAccountsList();
+            }
 		}
 
 		private void MenuLoginAgain_Click(object sender, EventArgs e) => PromptRefreshLogin(CurrentAccount);
