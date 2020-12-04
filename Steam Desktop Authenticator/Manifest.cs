@@ -273,6 +273,16 @@ namespace Steam_Desktop_Authenticator {
 			return accounts != null && accounts.Length == 1;
 		}
 
+        public bool CanProceedAction(out string password)
+        {
+            password = null;
+            if (!Encrypted)
+                return true;
+
+            password = PromptForPassKey();
+            return password != null;
+        }
+
 		public bool RemoveAccount(SteamGuardAccount account, bool deleteMaFile = true) {
 			ManifestEntry entry = (from e in Entries where e.SteamID == account.Session.SteamID select e).FirstOrDefault();
 			if (entry == null) {

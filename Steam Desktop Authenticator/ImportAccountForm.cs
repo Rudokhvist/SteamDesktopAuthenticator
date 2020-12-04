@@ -14,21 +14,9 @@ namespace Steam_Desktop_Authenticator {
 			InitializeComponent();
 			_manifest = Manifest.GetManifest();
 
-            if (!CanProceedImport(out _password))
+            if (!_manifest.CanProceedAction(out _password))
                 Close();
 		}
-
-        /// <summary>
-        /// Check if can proceed importing
-        /// </summary>
-        private bool CanProceedImport(out string password) {
-            password = null;
-            if (!_manifest.Encrypted)
-                return true;
-
-            password = _manifest.PromptForPassKey();
-            return password != null;
-        }
 
 		private void BtnImport_Click(object sender, EventArgs e) {
             // read EncryptionKey from imput box
