@@ -1,198 +1,166 @@
 using System;
 using System.Collections.Generic;
-using System.ComponentModel;
-using System.Data;
-using System.Drawing;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using System.Windows.Forms;
 using SteamAuth;
 using Newtonsoft.Json;
-using Newtonsoft.Json.Linq;
 using System.IO;
 
 namespace Steam_Desktop_Authenticator {
 	public partial class ImportAccountForm : Form {
-		private readonly Manifest Manifest;
+		private readonly Manifest _manifest;
+        private string _password = null;
 
 		public ImportAccountForm() {
 			InitializeComponent();
-			Manifest = Manifest.GetManifest();
+			_manifest = Manifest.GetManifest();
+
+            if (!CanProceedImport(out _password))
+                Close();
 		}
+
+        /// <summary>
+        /// Check if can proceed importing
+        /// </summary>
+        private bool CanProceedImport(out string password) {
+            password = null;
+            if (!_manifest.Encrypted)
+                return true;
+
+            password = _manifest.PromptForPassKey();
+            return password != null;
+        }
 
 		private void BtnImport_Click(object sender, EventArgs e) {
-			// check if data already added is encripted
-			#region check if data already added is encripted
-			string ContiuneImport = "0";
+            // read EncryptionKey from imput box
+            var encryptionKey = txtBox.Text;
 
-			string ManifestFile = "maFiles/manifest.json";
-			if (File.Exists(ManifestFile)) {
-				string AppManifestContents = File.ReadAllText(ManifestFile);
-				AppManifest AppManifestData = JsonConvert.DeserializeObject<AppManifest>(AppManifestContents);
-				bool AppManifestData_encrypted = AppManifestData.Encrypted;
-				if (AppManifestData_encrypted == true) {
-					MessageBox.Show("You can't import an .maFile because the existing account in the app is encrypted.\nDecrypt it and try again.");
-					Close();
-				} else if (AppManifestData_encrypted == false) {
-					ContiuneImport = "1";
-				} else {
-					MessageBox.Show("invalid value for variable 'encrypted' inside manifest.json");
-					Close();
-				}
-			} else {
-				MessageBox.Show("An Error occurred, Restart the program!");
-			}
-			#endregion
+            var fullPath = string.Empty;
+            var fileName = string.Empty;
+            var fileContent = string.Empty;
+            // Open file browser > to select the file
+            using (var fileDialog = new OpenFileDialog()) {
+                // Set filter options and filter index.
+                fileDialog.Filter = "maFiles (.maFile)|*.maFile|All Files (*.*)|*.*";
+                fileDialog.FilterIndex = 1;
+                fileDialog.Multiselect = false;
 
-			// Continue
-			#region Continue
-			if (ContiuneImport == "1") {
-				Close();
+                // Call the ShowDialog method to show the dialog box.
+                var isOk = fileDialog.ShowDialog() == DialogResult.OK;
+                if (!isOk)
+                    return;
 
-				// read EncriptionKey from imput box
-				string ImportUsingEncriptionKey = txtBox.Text;
+                fullPath = fileDialog.FileName;
+                fileName = fileDialog.SafeFileName;
+                fileContent = File.ReadAllText(fileDialog.FileName);
+            }
 
-				// Open file browser > to select the file
-				OpenFileDialog openFileDialog1 = new OpenFileDialog {
-					// Set filter options and filter index.
-					Filter = "maFiles (.maFile)|*.maFile|All Files (*.*)|*.*",
-					FilterIndex = 1,
-					Multiselect = false
-				};
+            var shouldEncryptBack = !string.IsNullOrEmpty(_password);
+            try {
+                if (string.IsNullOrEmpty(encryptionKey)) {
+                    #region Import maFile
 
-				// Call the ShowDialog method to show the dialog box.
-				DialogResult userClickedOK = openFileDialog1.ShowDialog();
+                    var plainMaFile = JsonConvert.DeserializeObject<SteamGuardAccount>(fileContent);
+                    if (plainMaFile.Session.SteamID == 0)
+                        throw new Exception("Invalid SteamID");
 
-				// Process input if the user clicked OK.
-				if (userClickedOK == DialogResult.OK) {
-					// Open the selected file to read.
-					System.IO.Stream fileStream = openFileDialog1.OpenFile();
-					string fileContents = null;
+                    _manifest.SaveAccount(plainMaFile, shouldEncryptBack, _password);
+                    MessageBox.Show("Account Imported!");
+                    return;
 
-					using (System.IO.StreamReader reader = new System.IO.StreamReader(fileStream)) {
-						fileContents = reader.ReadToEnd();
-					}
-					fileStream.Close();
+                    #endregion
+                }
 
-					try {
-						if (ImportUsingEncriptionKey == "") {
-							// Import maFile
-							//-------------------------------------------
-							#region Import maFile
-							SteamGuardAccount maFile = JsonConvert.DeserializeObject<SteamGuardAccount>(fileContents);
-							if (maFile.Session.SteamID != 0) {
-								Manifest.SaveAccount(maFile, false);
-								MessageBox.Show("Account Imported!");
-							} else {
-								throw new Exception("Invalid SteamID");
-							}
-							#endregion
-						} else {
-							// Import Encripted maFile
-							//-------------------------------------------
-							#region Import Encripted maFile
-							//Read manifest.json encryption_iv encryption_salt
-							string ImportFileName_Found = "0";
-							string Salt_Found = null;
-							string IV_Found = null;
-							string ReadManifestEx = "0";
+                #region Import Encrypted maFile
 
-							//No directory means no manifest file anyways.
-							ImportManifest newImportManifest = new ImportManifest {
-								Encrypted = false,
-								Entries = new List<ImportManifestEntry>()
-							};
+                //Read manifest.json encryption_iv encryption_salt
+                var importFileNameFound = false;
+                string Salt_Found = null;
+                string IV_Found = null;
 
-							// extract folder path
-							string fullPath = openFileDialog1.FileName;
-							string fileName = openFileDialog1.SafeFileName;
-							string path = fullPath.Replace(fileName, "");
+                //No directory means no manifest file anyways.
+                ImportManifest newImportManifest = new ImportManifest();
+                newImportManifest.Encrypted = false;
+                newImportManifest.Entries = new List<ImportManifestEntry>();
 
-							// extract fileName
-							string ImportFileName = fullPath.Replace(path, "");
+                // extract folder path
+                string path = fullPath.Replace(fileName, "");
 
-							string ImportManifestFile = path + "manifest.json";
+                // extract fileName
+                string ImportFileName = fullPath.Replace(path, "");
 
+                string ImportManifestFile = path + "manifest.json";
 
-							if (File.Exists(ImportManifestFile)) {
-								string ImportManifestContents = File.ReadAllText(ImportManifestFile);
+                if (!File.Exists(ImportManifestFile)) {
+                    MessageBox.Show("manifest.json is missing!\nImport Failed.");
+                    return;
+                }
 
+                string ImportManifestContents = File.ReadAllText(ImportManifestFile);
 
-								try {
-									ImportManifest account = JsonConvert.DeserializeObject<ImportManifest>(ImportManifestContents);
-									//bool Import_encrypted = account.Encrypted;
+                try {
+                    var account = JsonConvert.DeserializeObject<ImportManifest>(ImportManifestContents);
+                    foreach (var entry in account.Entries) {
+                        string FileName = entry.Filename;
 
-									List<ImportManifest> newEntries = new List<ImportManifest>();
+                        if (ImportFileName == FileName) {
+                            importFileNameFound = true;
+                            IV_Found = entry.IV;
+                            Salt_Found = entry.Salt;
+                        }
+                    }
+                }
+                catch (Exception)
+                {
+                    MessageBox.Show("Invalid content inside manifest.json!\nImport Failed.");
+                    return;
+                }
 
-									foreach (ImportManifestEntry entry in account.Entries) {
-										string FileName = entry.Filename;
-										string encryption_iv = entry.IV;
-										string encryption_salt = entry.Salt;
+                #region DECRYPT & Import
 
-										if (ImportFileName == FileName) {
-											ImportFileName_Found = "1";
-											IV_Found = entry.IV;
-											Salt_Found = entry.Salt;
-										}
-									}
-								} catch (Exception) {
-									ReadManifestEx = "1";
-									MessageBox.Show("Invalid content inside manifest.json!\nImport Failed.");
-								}
+                if (!importFileNameFound) {
+                    MessageBox.Show("Account not found inside manifest.json.\nImport Failed.");
+                    return;
+                }
+                if (Salt_Found == null && IV_Found == null) {
+                    MessageBox.Show("manifest.json does not contain encrypted data.\nYour account may be unencrypted!\nImport Failed.");
+                    return;
+                }
+                if (IV_Found == null) {
+                    MessageBox.Show("manifest.json does not contain: encryption_iv\nImport Failed.");
+                    return;
+                }
+                if (Salt_Found == null) {
+                    MessageBox.Show("manifest.json does not contain: encryption_salt\nImport Failed.");
+                    return;
+                }
 
+                var decryptedText = FileEncryptor.DecryptData(encryptionKey, Salt_Found, IV_Found, fileContent);
+                if (string.IsNullOrEmpty(decryptedText)) {
+                    MessageBox.Show("Decryption Failed.\nImport Failed.");
+                    return;
+                }
 
-								// DECRIPT & Import
-								//--------------------
-								#region DECRIPT & Import
-								if (ReadManifestEx == "0") {
-									if (ImportFileName_Found == "1" && Salt_Found != null && IV_Found != null) {
-										string decryptedText = FileEncryptor.DecryptData(ImportUsingEncriptionKey, Salt_Found, IV_Found, fileContents);
+                var maFile = JsonConvert.DeserializeObject<SteamGuardAccount>(decryptedText);
+                if (maFile.Session.SteamID == 0) {
+                    MessageBox.Show("Invalid SteamID.\nImport Failed.");
+                    return;
+                }
 
-										if (decryptedText == null) {
-											MessageBox.Show("Decryption Failed.\nImport Failed.");
-										} else {
-											string fileText = decryptedText;
+                _manifest.SaveAccount(maFile, shouldEncryptBack, _password);
+                MessageBox.Show("Account Imported!\nYour Account in now Decrypted!");
 
-											SteamGuardAccount maFile = JsonConvert.DeserializeObject<SteamGuardAccount>(fileText);
-											if (maFile.Session.SteamID != 0) {
-												Manifest.SaveAccount(maFile, false);
-												MessageBox.Show("Account Imported!\nYour Account in now Decrypted!");
-												//MainForm.loadAccountsList();
-											} else {
-												MessageBox.Show("Invalid SteamID.\nImport Failed.");
-											}
-										}
-									} else {
-										if (ImportFileName_Found == "0") {
-											MessageBox.Show("Account not found inside manifest.json.\nImport Failed.");
-										} else if (Salt_Found == null && IV_Found == null) {
-											MessageBox.Show("manifest.json does not contain encrypted data.\nYour account may be unencrypted!\nImport Failed.");
-										} else {
-											if (IV_Found == null) {
-												MessageBox.Show("manifest.json does not contain: encryption_iv\nImport Failed.");
-											} else if (IV_Found == null) {
-												MessageBox.Show("manifest.json does not contain: encryption_salt\nImport Failed.");
-											}
-										}
-									}
-								}
-								#endregion //DECRIPT & Import END
+                #endregion //DECRYPT & Import END
 
+                #endregion //Import Encrypted maFile END
 
-							} else {
-								MessageBox.Show("manifest.json is missing!\nImport Failed.");
-							}
-							#endregion //Import Encripted maFile END
-						}
-
-					} catch (Exception) {
-						MessageBox.Show("This file is not a valid SteamAuth maFile.\nImport Failed.");
-					}
-				}
-			}
-			#endregion // Continue End
-		}
+            }
+            catch (JsonException) {
+                MessageBox.Show("This file is not a valid SteamAuth maFile.\nImport Failed.");
+            }
+            catch (Exception ex) {
+                MessageBox.Show("Failed to import SteamAuth maFile.\n" + ex.Message);
+            }
+        }
 
 		private void BtnCancel_Click(object sender, EventArgs e) => Close();
 
